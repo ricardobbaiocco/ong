@@ -238,11 +238,11 @@ app.post('/cadOng', upload.single('imagem_prod'),function(req,res){
         res.send("Erro"+erro)
     })
 })
+
 //este bloco e disparado pela url do navegador e buscar o cadastroOng
 app.get('/cadastroOng',function(req,res){
     if(req.session.email){
-
-    ongCadastro.findAll().then(function(ongs){
+        ongCadastro.findAll({ where:{email:req.session.email}}).then(function(ongs){
         res.render('cadastroOng',{ong: ongs.map(cadastramento => cadastramento.toJSON())})
     })
 }else{
@@ -311,6 +311,7 @@ app.post('/verificaLogin',function (req,res){
             ongCadastro.findAll({where:{email:req.session.email}}).then(function(ongs){
                  idUsuario = ongs.map(u => u.toJSON().id)
                  req.session.idUsuario = idUsuario.toString()
+                 req.session.email=req.session.email
                 doacaoCadastro.findAll({where:{ idOng:req.session.idUsuario}}).then(function(doacoes){
                      res.render('cadastroDoacao',{doacao: doacoes.map(cadastramento => cadastramento.toJSON())})
                 })
@@ -338,14 +339,7 @@ app.get('/listaOng',function(req,res){
             res.render('cadastroOng',{ong: ongs.map(cadastramento => cadastramento.toJSON())})
     })
 })
-/*
-//criando nova rota get para listar opção de editar apenas a ong logada
-app.get('/listaEditarOng/:idOng',function(req,res){
-    ongCadastro.findAll({where:{'id':req.params.id}}).then(function(ongs){
-            res.render('perfilOng',{ong: ongs.map(cadastramento => cadastramento.toJSON())})
-    })
-})
-*/
+
 //TERMINANDO CONFIGURACÕES DA ONG
    
 
